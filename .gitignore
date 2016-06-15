@@ -3,3 +3,5 @@ build
 /examples/qmlapp/qmlappdemo.pro.user.3.3-pre1
 /examples/qmlapp/*.exe
 /examples/qmlapp/qmlappdemo.pro.user
+CMakeLists.txt.user
+CMake/common

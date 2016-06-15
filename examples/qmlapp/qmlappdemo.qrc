@@ -15,5 +15,9 @@
         <file>Syringe.qml</file>
         <file>ButtonFlatStyle.qml</file>
         <file>FontAwesome.otf</file>
+        <file>Style.qml</file>
+        <file>syringe1.png</file>
+        <file>syringe2.svg</file>
+        <file>qmldir</file>
     </qresource>
 </RCC>

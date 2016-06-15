@@ -64,7 +64,7 @@ Item {
      */
     function showKeyPopup(keyButton)
     {
-        console.log("showKeyPopup");
+        //console.log("showKeyPopup");
         keyPopup.popup(keyButton, root);
     }
 

@@ -103,19 +103,23 @@ bool DeclarativeInputEngine::virtualKeyClick(Qt::Key key, const QString & text, 
 //==============================================================================
 void DeclarativeInputEngine::sendKeyToFocusItem(const QString& text)
 {
-    qDebug() << "CDeclarativeInputEngine::sendKeyToFocusItem " << text;
+//    qDebug() << "CDeclarativeInputEngine::sendKeyToFocusItem " << text;
     QInputMethodEvent ev;
     if (text == QString("\x7F"))
     {
         //delete one char
         ev.setCommitString("",-1,1);
 
-    } else
+    }
+    else
     {
         //add some text
         ev.setCommitString(text);
     }
-    QCoreApplication::sendEvent(QGuiApplication::focusObject(),&ev);
+    QObject* receiver = QGuiApplication::focusObject() ?
+                            QGuiApplication::focusObject() :
+                            QGuiApplication::instance();
+    QCoreApplication::sendEvent( receiver, &ev );
 }
 
 

@@ -127,11 +127,11 @@ Item {
             if (root.state == "")
             {
                 root.state = "REPEATING"
-                console.log("switching to repeating");
+                //console.log("switching to repeating");
             }
             else if (root.state == "REPEATING")
             {
-                console.log("repeating");
+                //console.log("repeating");
             }
 
             if (!functionKey)
@@ -141,9 +141,9 @@ Item {
         }
     }
 
-    onInputPanelChanged: {
-        console.log("onInputPanelChanged: " + inputPanel.objectName);
-    }
+//    onInputPanelChanged: {
+//        console.log("onInputPanelChanged: " + inputPanel.objectName);
+//    }
 
     /**
      * If the InputPanel property has a valid InputPanel reference and if
@@ -160,7 +160,7 @@ Item {
 
     onReleased: {
         state = ""
-        console.log("onReleased - functionKey = " + functionKey)
+        //console.log("onReleased - functionKey = " + functionKey)
         if (!functionKey)
         {
             InputEngine.sendKeyToFocusItem(text)

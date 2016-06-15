@@ -32,7 +32,7 @@ class DeclarativeInputEngine : public QObject
     Q_ENUMS(InputMode)
 private:
     DeclarativeInputEnginePrivate* d;
-    friend class DeclarativeInputEnginePrivate;
+    friend struct DeclarativeInputEnginePrivate;
 
 private slots:
     void animatingFinished();

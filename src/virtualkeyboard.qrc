@@ -1,3 +1,9 @@
 <RCC>
-    <qresource prefix="/"/>
+    <qresource prefix="/virtualkeyboard">
+        <file>InputPanel.qml</file>
+        <file>KeyModel.qml</file>
+        <file>KeyButton.qml</file>
+        <file>KeyPopup.qml</file>
+        <file>FontAwesome.otf</file>
+    </qresource>
 </RCC>

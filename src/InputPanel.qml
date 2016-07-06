@@ -17,6 +17,13 @@ Item {
     // Report actual keyboard rectangle to input engine
     onYChanged: InputEngine.setKeyboardRectangle(Qt.rect(x, y, width, height))
 
+    signal hideKeyPressed()
+    signal keyPressed(var key, int modifiers, string text)
+
+    function sendKeyPress(key, text) {
+        keyPressed(key, pimpl.shiftModifier ? Qt.ShiftModifier : Qt.NoModifier, text)
+    }
+
     KeyModel {
         id:keyModel
     }
@@ -43,6 +50,7 @@ Item {
             width: pimpl.buttonWidth
             height: pimpl.rowHeight
             text: (pimpl.shiftModifier) ? letter.toUpperCase() : (pimpl.symbolModifier)?firstSymbol : letter
+            key: (pimpl.symbolModifier) ? symbolKeycode : keycode
             inputPanel: root
         }
     }
@@ -148,6 +156,7 @@ Item {
                     width: 1.25*pimpl.buttonWidth
                     height: pimpl.rowHeight
                     text: "\x7F"
+                    key: Qt.Key_Backspace
                     displayText: "\uf177"
                     inputPanel: root
                     repeat: true
@@ -167,6 +176,7 @@ Item {
                     functionKey: true
                     onClicked: {
                         Qt.inputMethod.hide()
+                        root.hideKeyPressed()
                     }
                     inputPanel: root
                     showPreview: false

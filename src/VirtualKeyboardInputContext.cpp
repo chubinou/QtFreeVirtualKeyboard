@@ -137,7 +137,7 @@ void VirtualKeyboardInputContext::setFocusObject(QObject *object)
     static const int DialableInputHints = Qt::ImhDialableCharactersOnly;
 
 
-    qDebug() << "VirtualKeyboardInputContext::setFocusObject";
+    //qDebug() << "VirtualKeyboardInputContext::setFocusObject";
     if (!object)
     {
         return;
@@ -162,7 +162,7 @@ void VirtualKeyboardInputContext::setFocusObject(QObject *object)
     // Set input mode depending on input method hints queried from focused
     // object / item
     Qt::InputMethodHints InputMethodHints(d->FocusItem->inputMethodQuery(Qt::ImHints).toInt());
-    qDebug() << QString("InputMethodHints: %1").arg(InputMethodHints, 0, 16);
+    //qDebug() << QString("InputMethodHints: %1").arg(InputMethodHints, 0, 16);
     if (InputMethodHints & DialableInputHints)
     {
         d->InputEngine->setInputMode(DeclarativeInputEngine::Dialable);
@@ -186,7 +186,7 @@ void VirtualKeyboardInputContext::setFocusObject(QObject *object)
         if (Flickable)
         {
             d->Flickable = Flickable;
-            qDebug() << "is QQuickFlickable";
+            //qDebug() << "is QQuickFlickable";
         }
         i = i->parentItem();
     }

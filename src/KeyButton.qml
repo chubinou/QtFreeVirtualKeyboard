@@ -137,6 +137,7 @@ Item {
             if (!functionKey)
             {
                 InputEngine.sendKeyToFocusItem(text)
+                inputPanel.sendKeyPress(key, text)
             }
         }
     }
@@ -164,6 +165,7 @@ Item {
         if (!functionKey)
         {
             InputEngine.sendKeyToFocusItem(text)
+            inputPanel.sendKeyPress(key, text)
         }
     }
 

@@ -128,17 +128,20 @@ Item {
             {
                 root.state = "REPEATING"
                 //console.log("switching to repeating");
+                if (!functionKey)
+                    inputPanel.sendKeyRelease(key, text)
             }
             else if (root.state == "REPEATING")
             {
                 //console.log("repeating");
+                if (!functionKey)
+                {
+                    InputEngine.sendKeyToFocusItem(text)
+                    inputPanel.sendKeyPress(key, text)
+                    inputPanel.sendKeyRelease(key, text)
+                }
             }
 
-            if (!functionKey)
-            {
-                InputEngine.sendKeyToFocusItem(text)
-                inputPanel.sendKeyPress(key, text)
-            }
         }
     }
 
@@ -155,6 +158,8 @@ Item {
         if (inputPanel != null && showPreview)
         {
             inputPanel.showKeyPopup(root);
+            if (!functionKey)
+                inputPanel.sendKeyPress(key, text)
         }
         isHighlighted = true;
     }
@@ -165,7 +170,8 @@ Item {
         if (!functionKey)
         {
             InputEngine.sendKeyToFocusItem(text)
-            inputPanel.sendKeyPress(key, text)
+            if (!functionKey)
+                inputPanel.sendKeyRelease(key, text)
         }
     }
 

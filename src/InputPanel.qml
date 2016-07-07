@@ -19,10 +19,17 @@ Item {
 
     signal hideKeyPressed()
     signal keyPressed(var key, int modifiers, string text)
+    signal keyReleased(var key, int modifiers, string text)
 
     function sendKeyPress(key, text) {
         keyPressed(key, pimpl.shiftModifier ? Qt.ShiftModifier : Qt.NoModifier, text)
     }
+    function sendKeyRelease(key, text) {
+        keyReleased(key, pimpl.shiftModifier ? Qt.ShiftModifier : Qt.NoModifier, text)
+    }
+
+    property alias shiftActive: pimpl.shiftModifier
+    property alias symbolsActive: pimpl.symbolModifier
 
     KeyModel {
         id:keyModel
@@ -52,6 +59,7 @@ Item {
             text: (pimpl.shiftModifier) ? letter.toUpperCase() : (pimpl.symbolModifier)?firstSymbol : letter
             key: (pimpl.symbolModifier) ? symbolKeycode : keycode
             inputPanel: root
+            repeat: true
         }
     }
 

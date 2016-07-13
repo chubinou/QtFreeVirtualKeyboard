@@ -94,6 +94,7 @@ Item {
     id: root
     property alias text: txt.text
     property alias font: txt.font
+    property int keyId: -1
 
     width: 40
     height: 40
@@ -159,6 +160,7 @@ Item {
 
         text = keybutton.displayText;
         font.family = keybutton.font.family
+        keyId = keybutton.keyId
         visible = Qt.binding(function() {return keybutton.isHighlighted});
     }
 }

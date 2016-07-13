@@ -78,6 +78,11 @@ Item {
      */
     property bool functionKey: false
 
+    /**
+     * A unique identifier for the key, used to distribute the key popup state.
+     */
+    property int keyId
+
     signal clicked()
     signal pressed()
     signal released()
@@ -156,11 +161,11 @@ Item {
      */
     onPressed: {
         if (inputPanel != null && showPreview)
-        {
             inputPanel.showKeyPopup(root);
-            if (!functionKey)
-                inputPanel.sendKeyPress(key, text)
-        }
+
+        if (!functionKey)
+            inputPanel.sendKeyPress(key, text)
+
         isHighlighted = true;
     }
 

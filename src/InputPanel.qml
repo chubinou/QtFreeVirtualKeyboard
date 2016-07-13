@@ -60,6 +60,7 @@ Item {
             key: (pimpl.symbolModifier) ? symbolKeycode : keycode
             inputPanel: root
             repeat: true
+            keyId: keyIdOffset + index
         }
     }
 
@@ -71,6 +72,71 @@ Item {
                                  || (InputEngine.inputMode == InputEngine.Dialable))
             if (pimpl.symbolModifier) {
                 pimpl.shiftModifier = false
+            }
+        }
+    }
+
+    /** Signal when a key has been activated by direct user action. */
+    signal keyActivated(int keyId)
+    Component.onCompleted: {
+        keyPopup.visibleChanged.connect(function() {
+            if (keyPopup.visible)
+                keyActivated(keyPopup.keyId)
+            else
+                keyActivated(-1)
+        })
+    }
+
+    /** Programatically highlight a key, as if it was pressed by the user. */
+    property int activeKeyId: -1
+    property var previousItem: undefined
+    onActiveKeyIdChanged: {
+        if (previousItem !== undefined)
+            previousItem.isHighlighted = false
+
+        if (activeKeyId < 0) {
+            keyPopup.visible = false
+            previousItem = undefined
+        }
+        else {
+            var item = getKeyItem(activeKeyId)
+            showKeyPopup(item)
+            item.isHighlighted = true
+            previousItem = item
+            keyPopup.visible = true
+        }
+    }
+
+    /**
+     * Get the KeyButton corresponding to a given keyId.
+     */
+    function getKeyItem(id) {
+        if (id < firstRow.count)
+            return firstRow.itemAt(id);
+        else if (id < firstRow.count + secondRow.count)
+            return secondRow.itemAt(id - firstRow.count)
+        else if (id < firstRow.count + secondRow.count + thirdRow.count)
+            return thirdRow.itemAt(id - firstRow.count - secondRow.count)
+        else {
+            switch (id - (firstRow.count + secondRow.count + thirdRow.count)) {
+            case 0:
+                return shiftKey
+            case 1:
+                return backspaceKey
+            case 2:
+                return hideKey
+            case 3:
+                return emptyKey
+            case 4:
+                return commaKey
+            case 5:
+                return spacebarKey
+            case 6:
+                return dotKey
+            case 7:
+                return enterKey
+            default:
+                return undefined
             }
         }
     }
@@ -113,6 +179,7 @@ Item {
                 spacing: pimpl.horizontalSpacing
                 anchors.horizontalCenter:parent.horizontalCenter
                 Repeater {
+                    id: firstRow
                     model: keyModel.firstRowModel
                     delegate: keyButtonDelegate
                 }
@@ -122,6 +189,7 @@ Item {
                 spacing: pimpl.horizontalSpacing
                 anchors.horizontalCenter:parent.horizontalCenter
                 Repeater {
+                    id: secondRow
                     model: keyModel.secondRowModel
                     delegate: keyButtonDelegate
                 }
@@ -138,6 +206,7 @@ Item {
                     font.family: "FontAwesome"
                     text: "\uf062"
                     functionKey: true
+                    keyId: firstRow.count + secondRow.count + thirdRow.count + 0
                     onClicked: {
                         if (pimpl.symbolModifier) {
                             pimpl.symbolModifier = false
@@ -151,6 +220,7 @@ Item {
                     spacing: pimpl.horizontalSpacing
                     anchors.horizontalCenter:parent.horizontalCenter
                     Repeater {
+                        id: thirdRow
                         anchors.horizontalCenter: parent.horizontalCenter
                         model: keyModel.thirdRowModel
                         delegate: keyButtonDelegate
@@ -168,6 +238,7 @@ Item {
                     displayText: "\uf177"
                     inputPanel: root
                     repeat: true
+                    keyId: firstRow.count + secondRow.count + thirdRow.count + 1
                 }
             }
             Row {
@@ -188,34 +259,41 @@ Item {
                     }
                     inputPanel: root
                     showPreview: false
+                    keyId: firstRow.count + secondRow.count + thirdRow.count + 2
                 }
                 KeyButton {
+                    id: emptyKey
                     color: "#1e1b18"
                     width: 1.25*pimpl.buttonWidth
                     height: pimpl.rowHeight
                     text: ""
                     inputPanel: root
                     functionKey: true
+                    keyId: firstRow.count + secondRow.count + thirdRow.count + 3
                 }
                 KeyButton {
+                    id: commaKey
                     width: pimpl.buttonWidth
                     height: pimpl.rowHeight
                     text: ","
                     inputPanel: root
+                    keyId: firstRow.count + secondRow.count + thirdRow.count + 4
                 }
                 KeyButton {
-                    id: spaceKey
+                    id: spacebarKey
                     width: 3*pimpl.buttonWidth
                     height: pimpl.rowHeight
                     text: " "
                     inputPanel: root
-                    showPreview: false
+                    keyId: firstRow.count + secondRow.count + thirdRow.count + 5
                 }
                 KeyButton {
+                    id: dotKey
                     width: pimpl.buttonWidth
                     height: pimpl.rowHeight
                     text: "."
                     inputPanel: root
+                    keyId: firstRow.count + secondRow.count + thirdRow.count + 6
                 }
                 KeyButton {
                     id: symbolKey
@@ -240,6 +318,7 @@ Item {
                     displayText: "Enter"
                     text: "\n"
                     inputPanel: root
+                    keyId: firstRow.count + secondRow.count + thirdRow.count + 7
                 }
             }
         }

@@ -204,6 +204,7 @@ Item {
                     width: 1.25*pimpl.buttonWidth
                     height: pimpl.rowHeight
                     font.family: "FontAwesome"
+                    key: Qt.Key_Shift
                     text: "\uf062"
                     functionKey: true
                     keyId: firstRow.count + secondRow.count + thirdRow.count + 0
@@ -275,6 +276,7 @@ Item {
                     id: commaKey
                     width: pimpl.buttonWidth
                     height: pimpl.rowHeight
+                    key: Qt.Key_Comma
                     text: ","
                     inputPanel: root
                     keyId: firstRow.count + secondRow.count + thirdRow.count + 4
@@ -283,6 +285,7 @@ Item {
                     id: spacebarKey
                     width: 3*pimpl.buttonWidth
                     height: pimpl.rowHeight
+                    key: Qt.Key_Space
                     text: " "
                     inputPanel: root
                     keyId: firstRow.count + secondRow.count + thirdRow.count + 5
@@ -291,6 +294,7 @@ Item {
                     id: dotKey
                     width: pimpl.buttonWidth
                     height: pimpl.rowHeight
+                    key: Qt.Key_Period
                     text: "."
                     inputPanel: root
                     keyId: firstRow.count + secondRow.count + thirdRow.count + 6
@@ -315,6 +319,7 @@ Item {
                     color: "#1e1b18"
                     width: 1.25*pimpl.buttonWidth
                     height: pimpl.rowHeight
+                    key: Qt.Key_Enter
                     displayText: "Enter"
                     text: "\n"
                     inputPanel: root

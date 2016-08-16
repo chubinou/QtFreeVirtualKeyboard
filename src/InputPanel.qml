@@ -59,7 +59,6 @@ Item {
             text: (pimpl.shiftModifier) ? letter.toUpperCase() : (pimpl.symbolModifier)?firstSymbol : letter
             key: (pimpl.symbolModifier) ? symbolKeycode : keycode
             inputPanel: root
-            repeat: true
             keyId: keyIdOffset + index
         }
     }

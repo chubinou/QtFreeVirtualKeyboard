@@ -21,8 +21,8 @@ QPlatformInputContext* VirtualKeyboardInputContextPlugin::create(const QString& 
 {
     Q_UNUSED(paramList);
 
-//    qDebug() << "VirtualKeyboardInputContextPlugin::create: " << system;
-    if (system.compare(system, QStringLiteral("qtvirtualkeyboard"), Qt::CaseInsensitive) == 0)
+    qDebug() << "VirtualKeyboardInputContextPlugin::create: " << system;
+    if (system.compare(system, QStringLiteral("virtualkeyboard"), Qt::CaseInsensitive) == 0)
     {
         return VirtualKeyboardInputContext::instance();
     }

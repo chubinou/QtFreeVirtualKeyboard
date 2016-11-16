@@ -34,6 +34,7 @@ class VirtualKeyboardInputContextPrivate
 {
 public:
     VirtualKeyboardInputContextPrivate();
+    ~VirtualKeyboardInputContextPrivate();
     QQuickFlickable* Flickable;
     QQuickItem* FocusItem;
     bool Visible;
@@ -49,9 +50,14 @@ VirtualKeyboardInputContextPrivate::VirtualKeyboardInputContextPrivate()
       Visible(false),
       InputEngine(new DeclarativeInputEngine())
 {
-
+    QQmlEngine::setObjectOwnership(InputEngine, QQmlEngine::CppOwnership);
 }
 
+VirtualKeyboardInputContextPrivate::~VirtualKeyboardInputContextPrivate()
+{
+   delete InputEngine;
+   delete FlickableContentScrollAnimation;
+}
 
 //==============================================================================
 VirtualKeyboardInputContext::VirtualKeyboardInputContext() :
@@ -70,7 +76,7 @@ VirtualKeyboardInputContext::VirtualKeyboardInputContext() :
 //==============================================================================
 VirtualKeyboardInputContext::~VirtualKeyboardInputContext()
 {
-
+    delete d;
 }
 
 

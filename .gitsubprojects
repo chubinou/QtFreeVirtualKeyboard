@@ -1,0 +1,2 @@
+# -*- mode: cmake -*-
+# HACK: empty file needed for CMake/common INSTALL_PACKAGES to work

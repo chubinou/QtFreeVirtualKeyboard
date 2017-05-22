@@ -4,4 +4,3 @@ build
 /examples/qmlapp/*.exe
 /examples/qmlapp/qmlappdemo.pro.user
 CMakeLists.txt.user
-CMake/common

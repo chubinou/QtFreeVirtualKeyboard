@@ -16,21 +16,14 @@ set(VIRTUALKEYBOARD_MAINTAINER "Blue Brain Project <bbp-open-source@googlegroups
 set(VIRTUALKEYBOARD_LICENSE MIT)
 set(VIRTUALKEYBOARD_DEB_DEPENDS qtbase5-dev qtbase5-private-dev
   qtdeclarative5-dev qtdeclarative5-private-dev)
-set(VIRTUALKEYBOARD_PORT_DEPENDS qt5-mac)
+set(VIRTUALKEYBOARD_PORT_DEPENDS qt5)
 
 include(Common)
 
 common_find_package(Qt5Core REQUIRED)
 common_find_package(Qt5Gui REQUIRED COMPONENTS Private)
 common_find_package(Qt5Qml REQUIRED)
-#common_find_package(Qt5Quick REQUIRED COMPONENTS Private)
-# WAR for Ubuntu 14.04 in Jenkins CI
-common_find_package(Qt5Quick 5.4 COMPONENTS Private)
-if(NOT Qt5Quick_FOUND)
-  message(WARNING "Qt5Quick not found, the project will not be built")
-  return()
-endif()
-
+common_find_package(Qt5Quick REQUIRED COMPONENTS Private)
 common_find_package_post()
 
 add_subdirectory(src)

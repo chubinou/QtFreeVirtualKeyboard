@@ -104,12 +104,8 @@ public:
 private:
     VirtualKeyboardInputContextPrivate *d;
 
-private slots:
-    /**
-     * This function scrolls the QML item into visible area if the focused
-     * QML item is child of a flickable
-     */
-    void ensureFocusedObjectVisible();
+    bool eventFilter(QObject *object, QEvent *event);
+
 }; // VirtualKeyboardInputContext
 
 //------------------------------------------------------------------------------

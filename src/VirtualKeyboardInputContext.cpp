@@ -36,10 +36,9 @@ public:
     VirtualKeyboardInputContextPrivate();
     ~VirtualKeyboardInputContextPrivate();
     QQuickFlickable* Flickable;
-    QQuickItem* FocusItem;
+    QObject* FocusItem;
     bool Visible;
     DeclarativeInputEngine* InputEngine;
-    QPropertyAnimation* FlickableContentScrollAnimation;//< for smooth scrolling of flickable content item
 };
 
 
@@ -56,20 +55,14 @@ VirtualKeyboardInputContextPrivate::VirtualKeyboardInputContextPrivate()
 VirtualKeyboardInputContextPrivate::~VirtualKeyboardInputContextPrivate()
 {
    delete InputEngine;
-   delete FlickableContentScrollAnimation;
 }
 
 //==============================================================================
 VirtualKeyboardInputContext::VirtualKeyboardInputContext() :
     QPlatformInputContext(), d(new VirtualKeyboardInputContextPrivate)
 {
-    d->FlickableContentScrollAnimation = new QPropertyAnimation(this);
-    d->FlickableContentScrollAnimation->setPropertyName("contentY");
-    d->FlickableContentScrollAnimation->setDuration(400);
-    d->FlickableContentScrollAnimation->setEasingCurve(QEasingCurve(QEasingCurve::OutBack));
     qmlRegisterSingletonType<DeclarativeInputEngine>("VirtualKeyboard", 1, 0,
         "InputEngine", inputEngineProvider);
-    connect(d->InputEngine, SIGNAL(animatingChanged()), this, SLOT(ensureFocusedObjectVisible()));
 }
 
 
@@ -142,100 +135,38 @@ void VirtualKeyboardInputContext::setFocusObject(QObject *object)
         | Qt::ImhTime | Qt::ImhDigitsOnly | Qt::ImhFormattedNumbersOnly;
     static const int DialableInputHints = Qt::ImhDialableCharactersOnly;
 
-
-    //qDebug() << "VirtualKeyboardInputContext::setFocusObject";
     if (!object)
-    {
         return;
-    }
 
-    // we only support QML at the moment - so if this is not a QML item, then
-    // we leave immediatelly
-    d->FocusItem = dynamic_cast<QQuickItem*>(object);
-    if (!d->FocusItem)
-    {
-        return;
-    }
+    if (d->FocusItem)
+        d->FocusItem->removeEventFilter(this);
 
-    // Check if an input control has focus that accepts text input - if not,
-    // then we can leave immediatelly
-    bool AcceptsInput = d->FocusItem->inputMethodQuery(Qt::ImEnabled).toBool();
-    if (!AcceptsInput)
-    {
-        return;
-    }
-
-    // Set input mode depending on input method hints queried from focused
-    // object / item
-    Qt::InputMethodHints InputMethodHints(d->FocusItem->inputMethodQuery(Qt::ImHints).toInt());
-    //qDebug() << QString("InputMethodHints: %1").arg(InputMethodHints, 0, 16);
-    if (InputMethodHints & DialableInputHints)
-    {
-        d->InputEngine->setInputMode(DeclarativeInputEngine::Dialable);
-    }
-    else if (InputMethodHints & NumericInputHints)
-    {
-        d->InputEngine->setInputMode(DeclarativeInputEngine::Numeric);
-    }
-    else
-    {
-        d->InputEngine->setInputMode(DeclarativeInputEngine::Latin);
-    }
-
-    // Search for the top most flickable so that we can scroll the control
-    // into the visible area, if the keyboard hides the control
-    QQuickItem* i = d->FocusItem;
-    d->Flickable = 0;
-    while (i)
-    {
-        QQuickFlickable* Flickable = dynamic_cast<QQuickFlickable*>(i);
-        if (Flickable)
-        {
-            d->Flickable = Flickable;
-            //qDebug() << "is QQuickFlickable";
-        }
-        i = i->parentItem();
-    }
-
-    ensureFocusedObjectVisible();
+    d->FocusItem = object;
+    d->FocusItem->installEventFilter(this);
 }
 
 
 //==============================================================================
-void VirtualKeyboardInputContext::ensureFocusedObjectVisible()
+bool VirtualKeyboardInputContext::eventFilter(QObject *object, QEvent *event)
 {
-    // If the keyboard is hidden, no scrollable element exists or the keyboard
-    // is just animating, then we leave here
-    if (!d->Visible || !d->Flickable || d->InputEngine->isAnimating())
+    if (object != d->FocusItem)
+        return false;
+    QEvent::Type type = event->type();
+    if ((type == QEvent::KeyPress || type == QEvent::KeyRelease) && isInputPanelVisible())
     {
-        return;
+        const QKeyEvent *keyEvent = static_cast<const QKeyEvent *>(event);
+        int key = keyEvent->key();
+        if ((key >= Qt::Key_Left && key <= Qt::Key_Down) || key == Qt::Key_Space)
+        {
+            if (type == QEvent::KeyPress)
+                emit d->InputEngine->navPressed((Qt::Key)key);
+            else
+                emit d->InputEngine->navReleased((Qt::Key)key);
+            return true;
+        }
     }
-
-    qDebug() << "VirtualKeyboardInputContext::ensureFocusedObjectVisible";
-    QRectF FocusItemRect(0, 0, d->FocusItem->width(), d->FocusItem->height());
-    FocusItemRect = d->Flickable->mapRectFromItem(d->FocusItem, FocusItemRect);
-    qDebug() << "FocusItemRect: " << FocusItemRect;
-    qDebug() << "Content origin: " << QPointF(d->Flickable->contentX(),
-        d->Flickable->contentY());
-    qDebug() << "Flickable size: " << QSize(d->Flickable->width(), d->Flickable->height());
-    d->FlickableContentScrollAnimation->setTargetObject(d->Flickable);
-    qreal ContentY = d->Flickable->contentY();
-    if (FocusItemRect.bottom() >= d->Flickable->height())
-    {
-        qDebug() << "Item outside!!!  FocusItemRect.bottom() >= d->Flickable->height()";
-        ContentY = d->Flickable->contentY() + (FocusItemRect.bottom() - d->Flickable->height()) + 20;
-        d->FlickableContentScrollAnimation->setEndValue(ContentY);
-        d->FlickableContentScrollAnimation->start();
-    }
-    else if (FocusItemRect.top() < 0)
-    {
-        qDebug() << "Item outside!!!  d->FocusItem->position().x < 0";
-        ContentY = d->Flickable->contentY() + FocusItemRect.top() - 20;
-        d->FlickableContentScrollAnimation->setEndValue(ContentY);
-        d->FlickableContentScrollAnimation->start();
-    }
+    return false;
 }
-
 
 //==============================================================================
 QObject* VirtualKeyboardInputContext::inputEngineProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
@@ -247,4 +178,3 @@ QObject* VirtualKeyboardInputContext::inputEngineProvider(QQmlEngine *engine, QJ
 
 //------------------------------------------------------------------------------
 // EOF VirtualKeyboardInpitContext.cpp
-

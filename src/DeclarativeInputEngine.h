@@ -144,6 +144,10 @@ signals:
      * Notify signal of inputModep property
      */
     void inputModeChanged();
+
+
+    void navPressed( Qt::Key  key );
+    void navReleased( Qt::Key key );
 }; // class CDeclarativeInputEngine
 
 

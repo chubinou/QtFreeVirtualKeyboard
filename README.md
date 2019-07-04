@@ -1,3 +1,5 @@
+This is a fork of [QtFreeVirtualKeyboard](https://github.com/githubuser0xFFFF/QtFreeVirtualKeyboard/). It aims to provide support for key navigation (ie: use with a remote)
+
 # QtFreeVirtualKeyboard
 A QML based on screen virtual keyboard for embedded QML applications.
 

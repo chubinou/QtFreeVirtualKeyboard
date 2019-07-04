@@ -15,13 +15,15 @@
 //============================================================================
 #include <QDebug>
 
-
 //============================================================================
 QPlatformInputContext* VirtualKeyboardInputContextPlugin::create(const QString& system, const QStringList& paramList)
 {
     Q_UNUSED(paramList);
 
-//    qDebug() << "VirtualKeyboardInputContextPlugin::create: " << system;
+#if defined(QT_STATICPLUGIN)
+    Q_INIT_RESOURCE(virtualkeyboard);
+#endif
+
     if (system.compare(system, QStringLiteral("virtualkeyboard"), Qt::CaseInsensitive) == 0)
     {
         return VirtualKeyboardInputContext::instance();

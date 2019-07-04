@@ -34,9 +34,11 @@ Item {
     KeyModel {
         id:keyModel
     }
+
     FontLoader {
         source: "FontAwesome.otf"
     }
+
     QtObject {
         id:pimpl
         property bool shiftModifier: false
@@ -45,6 +47,9 @@ Item {
         property int horizontalSpacing: verticalSpacing
         property int rowHeight: keyboard.height/4 - verticalSpacing
         property int buttonWidth:  (keyboard.width-column.anchors.margins)/10 - horizontalSpacing
+
+        property int focusRow: 0
+        property int focusCol: 0
     }
 
     /**
@@ -59,8 +64,29 @@ Item {
             text: (pimpl.shiftModifier) ? letter.toUpperCase() : (pimpl.symbolModifier)?firstSymbol : letter
             key: (pimpl.symbolModifier) ? symbolKeycode : keycode
             inputPanel: root
-            keyId: keyIdOffset + index
+            highlighted: pimpl.focusRow == button.row && pimpl.focusCol == button.col
         }
+    }
+
+
+    function translateCol( oldRow, oldCol, newRow )
+    {
+        var oldRowChildren = column.children[oldRow].children
+        var newRowChildren = column.children[newRow].children
+        var oldIndex = 0
+        for (var i = 0; i <= oldCol; i++) {
+            oldIndex += oldRowChildren[i].span
+        }
+
+        var newIndex = 0
+        var newCol = 0
+        for (var i = 0; i <= newRowChildren.length - 1; i++) {
+            newIndex += newRowChildren[i].span
+            if (newIndex >= oldIndex)
+                return newCol
+            newCol +=  1
+        }
+        return newCol - 1;
     }
 
     Connections {
@@ -73,92 +99,35 @@ Item {
                 pimpl.shiftModifier = false
             }
         }
-    }
+        onNavPressed: {
+            if (key === Qt.Key_Right) {
+                var colCount = column.children[pimpl.focusRow].children.length -1 //substract 1 for the repeater
+                pimpl.focusCol = Math.min(pimpl.focusCol + 1, colCount - 1)
+            } else if (key === Qt.Key_Left) {
+                pimpl.focusCol = Math.max(pimpl.focusCol - 1, 0)
+            } else if (key === Qt.Key_Up) {
+                var rowCount = column.children.length
+                var newRow = Math.max(pimpl.focusRow - 1, 0)
 
-    /** Signal when a key has been activated by direct user action. */
-    signal keyActivated(int keyId)
-    Component.onCompleted: {
-        keyPopup.visibleChanged.connect(function() {
-            if (keyPopup.visible)
-                keyActivated(keyPopup.keyId)
-            else
-                keyActivated(-1)
-        })
-    }
+                pimpl.focusCol = translateCol( pimpl.focusRow, pimpl.focusCol, newRow )
+                pimpl.focusRow = newRow
+            } else if (key === Qt.Key_Down) {
+                var rowCount = column.children.length
+                var newRow = Math.min(pimpl.focusRow + 1, rowCount - 1)
 
-    /** Programatically highlight a key, as if it was pressed by the user. */
-    property int activeKeyId: -1
-    property var previousItem: undefined
-    onActiveKeyIdChanged: {
-        if (previousItem !== undefined)
-            previousItem.isHighlighted = false
-
-        if (activeKeyId < 0) {
-            keyPopup.visible = false
-            previousItem = undefined
+                pimpl.focusCol = translateCol( pimpl.focusRow, pimpl.focusCol, newRow )
+                pimpl.focusRow = newRow
+            } else if (key === Qt.Key_Space) {
+                column.children[pimpl.focusRow].children[pimpl.focusCol].pressed()
+            }
         }
-        else {
-            var item = getKeyItem(activeKeyId)
-            showKeyPopup(item)
-            item.isHighlighted = true
-            previousItem = item
-            keyPopup.visible = true
-        }
-    }
-
-    /**
-     * Get the KeyButton corresponding to a given keyId.
-     */
-    function getKeyItem(id) {
-        if (id < firstRow.count)
-            return firstRow.itemAt(id);
-        else if (id < firstRow.count + secondRow.count)
-            return secondRow.itemAt(id - firstRow.count)
-        else if (id < firstRow.count + secondRow.count + thirdRow.count)
-            return thirdRow.itemAt(id - firstRow.count - secondRow.count)
-        else {
-            switch (id - (firstRow.count + secondRow.count + thirdRow.count)) {
-            case 0:
-                return shiftKey
-            case 1:
-                return backspaceKey
-            case 2:
-                return hideKey
-            case 3:
-                return emptyKey
-            case 4:
-                return commaKey
-            case 5:
-                return spacebarKey
-            case 6:
-                return dotKey
-            case 7:
-                return enterKey
-            default:
-                return undefined
+        onNavReleased: {
+            if (key === Qt.Key_Space) {
+                column.children[pimpl.focusRow].children[pimpl.focusCol].released()
             }
         }
     }
-
-    /**
-     * This function shows the character preview popup for each key button
-     */
-    function showKeyPopup(keyButton)
-    {
-        //console.log("showKeyPopup");
-        keyPopup.popup(keyButton, root);
-    }
-
-    /**
-     * The key popup for character preview
-     */
-    KeyPopup {
-        id: keyPopup
-        visible: false
-        z: 100
-    }
-
-
+    
     Rectangle {
         id:keyboard
         color: "black"
@@ -174,156 +143,160 @@ Item {
             spacing: pimpl.verticalSpacing
 
             Row {
+                id: firstRow
                 height: pimpl.rowHeight
                 spacing: pimpl.horizontalSpacing
                 anchors.horizontalCenter:parent.horizontalCenter
                 Repeater {
-                    id: firstRow
+                    visible: false
                     model: keyModel.firstRowModel
                     delegate: keyButtonDelegate
+                    onItemAdded: {
+                        item.row = 0
+                        item.col = index
+                    }
                 }
             }
+
             Row {
+                id: secondRow
                 height: pimpl.rowHeight
                 spacing: pimpl.horizontalSpacing
                 anchors.horizontalCenter:parent.horizontalCenter
                 Repeater {
-                    id: secondRow
                     model: keyModel.secondRowModel
                     delegate: keyButtonDelegate
+                    onItemAdded: {
+                        item.row = 1
+                        item.col = index
+                    }
                 }
             }
-            Item {
+
+            Row {
+                id: thirdRow
                 height: pimpl.rowHeight
-                width:parent.width
+                spacing: pimpl.horizontalSpacing
+                anchors.horizontalCenter:parent.horizontalCenter
+                Repeater {
+                    model: keyModel.thirdRowModel
+                    delegate: keyButtonDelegate
+                    onItemAdded: {
+                        item.row = 2
+                        item.col = index
+                    }
+                }
+            }
+
+
+            Row {
+                id: lastRow
+                height: pimpl.rowHeight
+                spacing: pimpl.horizontalSpacing
+                anchors.horizontalCenter:parent.horizontalCenter
+
                 KeyButton {
                     id: shiftKey
-                    color: (pimpl.shiftModifier)? "#1e6fa7": "#1e1b18"
-                    anchors.left: parent.left
-                    width: 1.25*pimpl.buttonWidth
+                    alt: true
+                    width: pimpl.buttonWidth
                     height: pimpl.rowHeight
                     font.family: "FontAwesome"
                     key: Qt.Key_Shift
                     text: "\uf062"
                     functionKey: true
-                    keyId: firstRow.count + secondRow.count + thirdRow.count + 0
-                    onClicked: {
+                    highlighted: pimpl.focusRow == 3 && pimpl.focusCol == 0
+                    onDoFunc: {
                         if (pimpl.symbolModifier) {
                             pimpl.symbolModifier = false
                         }
                         pimpl.shiftModifier = !pimpl.shiftModifier
                     }
                     inputPanel: root
+                    KeyNavigation.right: hideKey
                 }
-                Row {
-                    height: pimpl.rowHeight
-                    spacing: pimpl.horizontalSpacing
-                    anchors.horizontalCenter:parent.horizontalCenter
-                    Repeater {
-                        id: thirdRow
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        model: keyModel.thirdRowModel
-                        delegate: keyButtonDelegate
-                    }
-                }
-                KeyButton {
-                    id: backspaceKey
-                    font.family: "FontAwesome"
-                    color: "#1e1b18"
-                    anchors.right: parent.right
-                    width: 1.25*pimpl.buttonWidth
-                    height: pimpl.rowHeight
-                    text: "\x7F"
-                    key: Qt.Key_Backspace
-                    displayText: "\uf177"
-                    inputPanel: root
-                    repeat: true
-                    keyId: firstRow.count + secondRow.count + thirdRow.count + 1
-                }
-            }
-            Row {
-                height: pimpl.rowHeight
-                spacing: pimpl.horizontalSpacing
-                anchors.horizontalCenter:parent.horizontalCenter
+
+
                 KeyButton {
                     id: hideKey
-                    color: "#1e1b18"
-                    width: 1.25*pimpl.buttonWidth
+                    alt: true
+                    width: pimpl.buttonWidth
                     height: pimpl.rowHeight
                     font.family: "FontAwesome"
                     text: "\uf078"
                     functionKey: true
-                    onClicked: {
+                    highlighted: pimpl.focusRow == 3 && pimpl.focusCol == 1
+                    onDoFunc: {
                         Qt.inputMethod.hide()
                         root.hideKeyPressed()
                     }
                     inputPanel: root
                     showPreview: false
-                    keyId: firstRow.count + secondRow.count + thirdRow.count + 2
+
+                    KeyNavigation.right: symbolKey
                 }
-                KeyButton {
-                    id: emptyKey
-                    color: "#1e1b18"
-                    width: 1.25*pimpl.buttonWidth
-                    height: pimpl.rowHeight
-                    text: ""
-                    inputPanel: root
-                    functionKey: true
-                    keyId: firstRow.count + secondRow.count + thirdRow.count + 3
-                }
-                KeyButton {
-                    id: commaKey
-                    width: pimpl.buttonWidth
-                    height: pimpl.rowHeight
-                    key: Qt.Key_Comma
-                    text: ","
-                    inputPanel: root
-                    keyId: firstRow.count + secondRow.count + thirdRow.count + 4
-                }
-                KeyButton {
-                    id: spacebarKey
-                    width: 3*pimpl.buttonWidth
-                    height: pimpl.rowHeight
-                    key: Qt.Key_Space
-                    text: " "
-                    inputPanel: root
-                    keyId: firstRow.count + secondRow.count + thirdRow.count + 5
-                }
-                KeyButton {
-                    id: dotKey
-                    width: pimpl.buttonWidth
-                    height: pimpl.rowHeight
-                    key: Qt.Key_Period
-                    text: "."
-                    inputPanel: root
-                    keyId: firstRow.count + secondRow.count + thirdRow.count + 6
-                }
+
                 KeyButton {
                     id: symbolKey
-                    color: "#1e1b18"
-                    width: 1.25*pimpl.buttonWidth
+                    alt: true
+                    span: 2
+                    width: span *pimpl.buttonWidth + (span -1)* pimpl.horizontalSpacing
                     height: pimpl.rowHeight
                     text: (!pimpl.symbolModifier)? "12#" : "ABC"
                     functionKey: true
-                    onClicked: {
+                    highlighted: pimpl.focusRow == 3 && pimpl.focusCol == 2
+                    onDoFunc: {
                         if (pimpl.shiftModifier) {
                             pimpl.shiftModifier = false
                         }
                         pimpl.symbolModifier = !pimpl.symbolModifier
                     }
                     inputPanel: root
+                    KeyNavigation.right: spacebarKey
                 }
+
+                KeyButton {
+                    id: spacebarKey
+                    span: 3
+                    width: span *pimpl.buttonWidth + (span -1)* pimpl.horizontalSpacing
+                    height: pimpl.rowHeight
+                    key: Qt.Key_Space
+                    text: " "
+                    inputPanel: root
+                    highlighted: pimpl.focusRow == 3 && pimpl.focusCol == 3
+
+                    KeyNavigation.right: backspaceKey
+                }
+
+
+                KeyButton {
+                    id: backspaceKey
+                    font.family: "FontAwesome"
+                    alt: true
+                    width: pimpl.buttonWidth
+                    height: pimpl.rowHeight
+                    text: "\x7F"
+                    key: Qt.Key_Backspace
+                    displayText: "\uf177"
+                    inputPanel: root
+                    repeat: true
+                    highlighted: pimpl.focusRow == 3 && pimpl.focusCol == 4
+                    KeyNavigation.right: enterKey
+                }
+
+
                 KeyButton {
                     id: enterKey
-                    color: "#1e1b18"
-                    width: 1.25*pimpl.buttonWidth
+                    alt: true
+                    span: 2
+                    width: span *pimpl.buttonWidth + (span -1)* pimpl.horizontalSpacing
                     height: pimpl.rowHeight
                     key: Qt.Key_Enter
                     displayText: "Enter"
                     text: "\n"
                     inputPanel: root
-                    keyId: firstRow.count + secondRow.count + thirdRow.count + 7
+                    highlighted: pimpl.focusRow == 3 && pimpl.focusCol == 5
                 }
+                Item {}
             }
         }
     }

@@ -13,7 +13,11 @@ Item {
     /**
      * The background color of this button
      */
-    property color color: "#35322f"
+    property color color: highlighted ? "orange"
+        : alt ? "#1e1b18"
+        : "#35322f"
+
+    property bool alt : false
 
     /**
      * The key text to show in this button
@@ -34,6 +38,14 @@ Item {
      * This property holds the pressed status of the key.
      */
     property alias isPressed: buttonMouseArea.pressed
+
+    property int span: 1
+
+    property bool highlighted: false
+
+    property int row: 0
+    property int col: 0
+
 
     /**
      * This property holds a reference to the input panel.
@@ -78,12 +90,9 @@ Item {
      */
     property bool functionKey: false
 
-    /**
-     * A unique identifier for the key, used to distribute the key popup state.
-     */
-    property int keyId
 
     signal clicked()
+    signal doFunc()
     signal pressed()
     signal released()
 
@@ -105,7 +114,6 @@ Item {
         MouseArea {
             id: buttonMouseArea
             anchors.fill: parent
-            onClicked: root.clicked()
             onPressed: root.pressed()
             onReleased: root.released()
         }
@@ -159,10 +167,22 @@ Item {
      * showPreview is true, then this function calls showKeyPopup() to
      * show the character preview popup.
      */
-    onPressed: {
-        if (inputPanel != null && showPreview)
-            inputPanel.showKeyPopup(root);
 
+    Keys.onPressed: {
+        if (event.key == Qt.Key_Space) {
+            console.log("Keys.onPressed:")
+            root.pressed()
+        }
+    }
+
+    Keys.onReleased: {
+        if (event.key == Qt.Key_Space) {
+            console.log("Keys.onReleased:")
+            root.released()
+        }
+    }
+
+    onPressed: {
         if (!functionKey)
             inputPanel.sendKeyPress(key, text)
 
@@ -177,7 +197,10 @@ Item {
             InputEngine.sendKeyToFocusItem(text)
             if (!functionKey)
                 inputPanel.sendKeyRelease(key, text)
+        } else {
+            root.doFunc()
         }
+        isHighlighted = false;
     }
 
     states: [

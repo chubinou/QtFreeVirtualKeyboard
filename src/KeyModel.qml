@@ -12,40 +12,43 @@ Item {
     property QtObject secondRowModel: second
     property QtObject thirdRowModel: third
 
-
     ListModel {
         id:first
-        ListElement { letter: "q"; firstSymbol: "1"; keycode: Qt.Key_Q; symbolKeycode: Qt.Key_1; keyIdOffset: 0}
-        ListElement { letter: "w"; firstSymbol: "2"; keycode: Qt.Key_W; symbolKeycode: Qt.Key_2; keyIdOffset: 0}
-        ListElement { letter: "e"; firstSymbol: "3"; keycode: Qt.Key_E; symbolKeycode: Qt.Key_3; keyIdOffset: 0}
-        ListElement { letter: "r"; firstSymbol: "4"; keycode: Qt.Key_R; symbolKeycode: Qt.Key_4; keyIdOffset: 0}
-        ListElement { letter: "t"; firstSymbol: "5"; keycode: Qt.Key_T; symbolKeycode: Qt.Key_5; keyIdOffset: 0}
-        ListElement { letter: "y"; firstSymbol: "6"; keycode: Qt.Key_Y; symbolKeycode: Qt.Key_6; keyIdOffset: 0}
-        ListElement { letter: "u"; firstSymbol: "7"; keycode: Qt.Key_U; symbolKeycode: Qt.Key_7; keyIdOffset: 0}
-        ListElement { letter: "i"; firstSymbol: "8"; keycode: Qt.Key_I; symbolKeycode: Qt.Key_8; keyIdOffset: 0}
-        ListElement { letter: "o"; firstSymbol: "9"; keycode: Qt.Key_O; symbolKeycode: Qt.Key_9; keyIdOffset: 0}
-        ListElement { letter: "p"; firstSymbol: "0"; keycode: Qt.Key_E; symbolKeycode: Qt.Key_0; keyIdOffset: 0}
+        ListElement { letter: "a"; firstSymbol: "1"; keycode: Qt.Key_A; symbolKeycode: Qt.Key_1; }
+        ListElement { letter: "z"; firstSymbol: "2"; keycode: Qt.Key_Z; symbolKeycode: Qt.Key_2; }
+        ListElement { letter: "e"; firstSymbol: "3"; keycode: Qt.Key_E; symbolKeycode: Qt.Key_3; }
+        ListElement { letter: "r"; firstSymbol: "4"; keycode: Qt.Key_R; symbolKeycode: Qt.Key_4; }
+        ListElement { letter: "t"; firstSymbol: "5"; keycode: Qt.Key_T; symbolKeycode: Qt.Key_5; }
+        ListElement { letter: "y"; firstSymbol: "6"; keycode: Qt.Key_Y; symbolKeycode: Qt.Key_6; }
+        ListElement { letter: "u"; firstSymbol: "7"; keycode: Qt.Key_U; symbolKeycode: Qt.Key_7; }
+        ListElement { letter: "i"; firstSymbol: "8"; keycode: Qt.Key_I; symbolKeycode: Qt.Key_8; }
+        ListElement { letter: "o"; firstSymbol: "9"; keycode: Qt.Key_O; symbolKeycode: Qt.Key_9; }
+        ListElement { letter: "p"; firstSymbol: "0"; keycode: Qt.Key_P; symbolKeycode: Qt.Key_0; }
     }
     ListModel {
         id:second
-        ListElement { letter: "a"; firstSymbol: "!"; keycode: Qt.Key_A; symbolKeycode: Qt.Key_Exclam; keyIdOffset: 10}
-        ListElement { letter: "s"; firstSymbol: "@"; keycode: Qt.Key_S; symbolKeycode: Qt.Key_At; keyIdOffset: 10}
-        ListElement { letter: "d"; firstSymbol: "#"; keycode: Qt.Key_D; symbolKeycode: Qt.Key_NumberSign; keyIdOffset: 10}
-        ListElement { letter: "f"; firstSymbol: "$"; keycode: Qt.Key_F; symbolKeycode: Qt.Key_Dollar; keyIdOffset: 10}
-        ListElement { letter: "g"; firstSymbol: "%"; keycode: Qt.Key_G; symbolKeycode: Qt.Key_Percent; keyIdOffset: 10}
-        ListElement { letter: "h"; firstSymbol: "&"; keycode: Qt.Key_H; symbolKeycode: Qt.Key_Ampersand; keyIdOffset: 10}
-        ListElement { letter: "j"; firstSymbol: "*"; keycode: Qt.Key_J; symbolKeycode: Qt.Key_Asterisk; keyIdOffset: 10}
-        ListElement { letter: "k"; firstSymbol: "?"; keycode: Qt.Key_K; symbolKeycode: Qt.Key_Question; keyIdOffset: 10}
-        ListElement { letter: "l"; firstSymbol: "/"; keycode: Qt.Key_L; symbolKeycode: Qt.Key_Slash; keyIdOffset: 10}
+        ListElement { letter: "q"; firstSymbol: "!"; keycode: Qt.Key_Q; symbolKeycode: Qt.Key_Exclam; }
+        ListElement { letter: "s"; firstSymbol: "="; keycode: Qt.Key_S; symbolKeycode: Qt.Key_Equal; }
+        ListElement { letter: "d"; firstSymbol: "#"; keycode: Qt.Key_D; symbolKeycode: Qt.Key_NumberSign; }
+        ListElement { letter: "f"; firstSymbol: "$"; keycode: Qt.Key_F; symbolKeycode: Qt.Key_Dollar; }
+        ListElement { letter: "g"; firstSymbol: "%"; keycode: Qt.Key_G; symbolKeycode: Qt.Key_Percent; }
+        ListElement { letter: "h"; firstSymbol: "&"; keycode: Qt.Key_H; symbolKeycode: Qt.Key_Ampersand; }
+        ListElement { letter: "j"; firstSymbol: "*"; keycode: Qt.Key_J; symbolKeycode: Qt.Key_Asterisk; }
+        ListElement { letter: "k"; firstSymbol: "?"; keycode: Qt.Key_K; symbolKeycode: Qt.Key_Question; }
+        ListElement { letter: "l"; firstSymbol: "~"; keycode: Qt.Key_L; symbolKeycode: Qt.Key_AsciiTilde; }
+        ListElement { letter: "m"; firstSymbol: "|"; keycode: Qt.Key_M; symbolKeycode: Qt.Key_Bar; }
     }
     ListModel {
         id:third
-        ListElement { letter: "z"; firstSymbol: "_"; keycode: Qt.Key_Z; symbolKeycode: Qt.Key_Underscore; keyIdOffset: 19}
-        ListElement { letter: "x"; firstSymbol: "\""; keycode: Qt.Key_X; symbolKeycode: Qt.Key_QuoteDbl; keyIdOffset: 19}
-        ListElement { letter: "c"; firstSymbol: "'"; keycode: Qt.Key_C; symbolKeycode: Qt.Key_Apostrophe; keyIdOffset: 19}
-        ListElement { letter: "v"; firstSymbol: "("; keycode: Qt.Key_V; symbolKeycode: Qt.Key_ParenLeft; keyIdOffset: 19}
-        ListElement { letter: "b"; firstSymbol: ")"; keycode: Qt.Key_B; symbolKeycode: Qt.Key_ParenRight; keyIdOffset: 19}
-        ListElement { letter: "n"; firstSymbol: "-"; keycode: Qt.Key_N; symbolKeycode: Qt.Key_Minus; keyIdOffset: 19}
-        ListElement { letter: "m"; firstSymbol: "+"; keycode: Qt.Key_M; symbolKeycode: Qt.Key_Plus; keyIdOffset: 19}
+        ListElement { letter: "w"; firstSymbol: "_"; keycode: Qt.Key_W; symbolKeycode: Qt.Key_Underscore; }
+        ListElement { letter: "x"; firstSymbol: "\""; keycode: Qt.Key_X; symbolKeycode: Qt.Key_QuoteDbl; }
+        ListElement { letter: "c"; firstSymbol: "'"; keycode: Qt.Key_C; symbolKeycode: Qt.Key_Apostrophe; }
+        ListElement { letter: "v"; firstSymbol: "("; keycode: Qt.Key_V; symbolKeycode: Qt.Key_ParenLeft; }
+        ListElement { letter: "b"; firstSymbol: ")"; keycode: Qt.Key_B; symbolKeycode: Qt.Key_ParenRight; }
+        ListElement { letter: "n"; firstSymbol: "["; keycode: Qt.Key_N; symbolKeycode: Qt.Key_BracketLeft; }
+        ListElement { letter: "@"; firstSymbol: "]"; keycode: Qt.Key_At; symbolKeycode: Qt.Key_BracketRight; }
+        ListElement { letter: "."; firstSymbol: ","; keycode: Qt.Key_Comma; symbolKeycode: Qt.Key_Colon; }
+        ListElement { letter: ":"; firstSymbol: ";"; keycode: Qt.Key_Period; symbolKeycode: Qt.Key_Semicolon; }
+        ListElement { letter: "/"; firstSymbol: "\\"; keycode: Qt.Key_Slash; symbolKeycode: Qt.Key_Backslash; }
     }
 }

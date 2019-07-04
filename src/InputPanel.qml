@@ -124,6 +124,8 @@ Item {
         onNavReleased: {
             if (key === Qt.Key_Space) {
                 column.children[pimpl.focusRow].children[pimpl.focusCol].released()
+            } else if (key === Qt.Key_Cancel) {
+                 Qt.inputMethod.hide()
             }
         }
     }

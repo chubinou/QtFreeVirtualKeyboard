@@ -156,7 +156,7 @@ bool VirtualKeyboardInputContext::eventFilter(QObject *object, QEvent *event)
     {
         const QKeyEvent *keyEvent = static_cast<const QKeyEvent *>(event);
         int key = keyEvent->key();
-        if ((key >= Qt::Key_Left && key <= Qt::Key_Down) || key == Qt::Key_Space)
+        if ((key >= Qt::Key_Left && key <= Qt::Key_Down) || key == Qt::Key_Space || key == Qt::Key_Cancel)
         {
             if (type == QEvent::KeyPress)
                 emit d->InputEngine->navPressed((Qt::Key)key);
